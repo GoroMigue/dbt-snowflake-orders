@@ -1,10 +1,10 @@
 select
     s_suppkey as supplier_id,
     s_name as supplier_name,
-    s_address as address,
-    s_nationkey as nation_id,
-    s_phone as phone,
-    s_acctbal as balance,
-    s_comment as comment
+    s_address as supplier_address,
+    s_nationkey as supplier_nation_id,
+    s_phone as supplier_phone,
+    s_acctbal as supplier_balance,
+    s_comment as supplier_comment
 
 from {{ source('delivery', 'supplier') }}

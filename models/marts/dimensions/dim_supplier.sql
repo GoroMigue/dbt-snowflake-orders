@@ -9,18 +9,21 @@ supplier_nation as (
         *
     from
         supplier
-    join nation using(nation_id)
+    join nation on nation_id = supplier_nation_id
 ),
 final as (
     select 
         supplier_id,
         supplier_name,
-        nation_id,
-        phone,
-        balance,
-        address,
-        nation_name,
-        region_name
+        supplier_nation_id,
+        supplier_phone,
+        supplier_balance,
+        supplier_address,
+        nation_name as supplier_nation_name,
+        region_name as supplier_region_name,
+        currency,
+        currency_rate,
+        time_zone
     from
         supplier_nation
 )
