@@ -16,7 +16,11 @@ final as (
         nation_id,
         nation_name,
         region_id,
-        region_name
+        region_name,
+        currency,
+        currency_rate,
+        time_zone
+
     from 
         nation_region
 )

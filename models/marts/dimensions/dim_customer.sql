@@ -8,19 +8,22 @@ customer_nation as (
     select
         *
     from
-        customer
-    join nation using(nation_id)
+        customers
+    join nation on nation_id = customer_nation_id
 ),
 final as (
     select 
-        customer_id
+        customer_id,
         customer_name,
-        phone,
-        balance,
-        market,
-        address,
-        nation_name,
-        region_name
+        customer_phone,
+        customer_balance,
+        customer_market,
+        customer_address,
+        nation_name as customer_nation_name,
+        region_name as customer_region_name,
+        currency,
+        currency_rate,
+        time_zone
     from
         customer_nation
 )
