@@ -1,10 +1,10 @@
 select
     l_orderkey as order_id,
     l_partkey as part_id,
-    l_suppkey as supp_id,
+    l_suppkey as supplier_id,
     l_linenumber as linenumber,
     l_quantity as quantity,
-    l_extendedprice as l_extendedprice,
+    l_extendedprice as extendedprice,
     l_discount as discount,
     l_tax as tax,
     l_returnflag as returnflag,
