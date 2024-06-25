@@ -1,0 +1,78 @@
+version: 2
+
+sources:
+  - name: delivery
+    description: clone of swnowflake sample data
+    database: raw  
+    schema: delivery 
+    tables:
+      - name: orders
+        description: raw orders data
+        columns:
+          - name: o_orderkey
+            description: primary key for orders data
+            tests:
+              - unique
+              - not_null
+      - name: lineitem
+        description: raw lineitem data
+        columns:
+          - name: l_orderkey
+            description: primary key for lineitems data
+            tests:
+              - unique
+              - not_null
+      - name: customer
+        description: raw customer data
+        columns:
+          - name: c_custkey
+            description: primary key for customers data
+            tests:
+              - unique
+              - not_null
+      - name: supplier
+        description: raw supplier data
+        columns:
+          - name: s_suppkey
+            description: primary key for suppliers data
+            tests:
+              - unique
+              - not_null
+      - name: part
+        description: raw parts data
+        columns:
+          - name: p_partkey
+            description: primary key for parts data
+            tests:
+              - unique
+              - not_null
+      - name: partsupp
+        description: raw partsupp data
+        columns:
+          - name: ps_partkey
+            description: primary key for partsupps data
+            tests:
+              - unique
+              - not_null        
+          - name: ps_suppkey
+            description: primary key for partsupps data
+            tests:
+              - unique
+              - not_null             
+      - name: region
+        description: raw regions data
+        columns:
+          - name: r_regionkey
+            description: primary key for regions data
+            tests:
+              - unique
+              - not_null
+      - name: nation
+        description: raw nations data
+        columns:
+          - name: n_nationkey
+            description: primary key for nations data
+            tests:
+              - unique
+              - not_null
+
