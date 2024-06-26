@@ -45,20 +45,7 @@ sources:
             description: primary key for parts data
             tests:
               - unique
-              - not_null
-      - name: partsupp
-        description: raw partsupp data
-        columns:
-          - name: ps_partkey
-            description: primary key for partsupps data
-            tests:
-              - unique
               - not_null        
-          - name: ps_suppkey
-            description: primary key for partsupps data
-            tests:
-              - unique
-              - not_null             
       - name: region
         description: raw regions data
         columns:

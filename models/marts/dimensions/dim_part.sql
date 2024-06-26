@@ -1,5 +1,8 @@
 with part as (
     select * from {{ ref('stg_delivery__part') }}
+    {% if is_incremental() %}
+    where part_id not in (select part_id from {{ this }})
+    {% endif %}
 ),
 final as (
     select 

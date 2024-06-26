@@ -1,5 +1,8 @@
 with shop as (
     select * from {{ ref('stg_delivery__shop') }}
+    {% if is_incremental() %}
+    where shop_id not in (select shop_id from {{ this }})
+    {% endif %}
 ),
 nation as (
     select * from {{ ref('dim_nation') }}

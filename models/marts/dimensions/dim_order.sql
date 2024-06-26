@@ -1,5 +1,8 @@
 with orders as (
     select * from {{ ref('stg_delivery__orders') }}
+    {% if is_incremental() %}
+    where order_id not in (select order_id from {{ this }})
+    {% endif %}
 ),
 final as (
     select
