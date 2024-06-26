@@ -4,12 +4,15 @@ with shop as (
 nation as (
     select * from {{ ref('dim_nation') }}
 ),
+exchange_rates as (
+    select * from {{ ref('stg_exchange__exchange_rates') }}
+),
 shop_nation as (
     select
         *
     from
         shop
-    join nation on nation_id = shop_nation_id
+    join nation n on n.nation_id = shop_nation_id
 ),
 final as (
     select
@@ -18,8 +21,11 @@ final as (
         shop_nation_id,
         nation_name as shop_nation_name,
         region_name as shop_region_name,
-        currency,
-        currency_rate,
+        currency_to as shop_currency,
+        rate as shop_exchange_rate,
         time_zone
+    from
+        shop_nation
+    join exchange_rates e on e.nation_id = shop_nation_id
 )
 select * from final

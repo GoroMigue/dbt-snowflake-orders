@@ -17,8 +17,6 @@ final as (
         nation_name,
         region_id,
         region_name,
-        currency,
-        currency_rate,
         time_zone
 
     from 
