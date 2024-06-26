@@ -10,8 +10,11 @@ final as (
         order_date,
         order_priority,
         SUBSTRING(clerk, CHARINDEX('#', clerk) + 1 , len(clerk)) as clerk,
-        ship_priority
+        ship_priority,
+        shop_id,
+        updated_at
     from
         orders
+    
 )
 select * from final
