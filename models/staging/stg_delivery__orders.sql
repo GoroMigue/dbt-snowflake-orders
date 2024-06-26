@@ -8,6 +8,7 @@ select
     o_clerk as clerk,
     o_shippriority as ship_priority,
     o_comment as comment,
-    shopkey as shop_id
+    shopkey as shop_id,
+    updated_at
 
 from {{ source('delivery', 'orders') }}

@@ -3,8 +3,6 @@ select
     n_name as nation_name,
     n_regionkey as region_id,
     n_comment as comment,
-    currency,
-    currency_rate,
     time_zone
 
 from {{ source('delivery', 'nation') }}

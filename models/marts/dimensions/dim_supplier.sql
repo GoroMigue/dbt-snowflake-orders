@@ -21,8 +21,6 @@ final as (
         supplier_address,
         nation_name as supplier_nation_name,
         region_name as supplier_region_name,
-        currency,
-        currency_rate,
         time_zone
     from
         supplier_nation

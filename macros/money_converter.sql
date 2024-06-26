@@ -1,3 +1,3 @@
-{% macro money_converter(column_name, badge_rate) -%}
-    round( {{ column_name }} * {{ badge_rate }}, 2 )
+{% macro money_converter(amount, exchange_rate) -%}
+    round( {{ amount }} * {{ exchange_rate }}, 2 )
 {%- endmacro -%}

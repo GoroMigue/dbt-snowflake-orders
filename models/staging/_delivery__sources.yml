@@ -83,4 +83,12 @@ sources:
             tests:
               - unique
               - not_null
+      - name: sales_event
+        description: raw sales_event data
+        columns:
+          - name: event_id
+            description: primary key for events data
+            tests:
+              - unique
+              - not_null
 
