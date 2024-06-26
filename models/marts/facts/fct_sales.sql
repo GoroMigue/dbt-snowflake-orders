@@ -42,7 +42,11 @@ sales as (
         c.customer_currency,
         {{ money_converter('l.extendedprice', 'shop.shop_exchange_rate') }} as shop_item_price,
         {{ money_converter('o.total_price', 'shop.shop_exchange_rate') }} as shop_total_price,
-        shop.shop_currency
+        shop.shop_currency,
+        l.extendedprice,
+        o.total_price as total_price_default,
+        'USD' as currency
+
 
     from
         {{ ref('stg_delivery__lineitem') }} l
@@ -57,6 +61,9 @@ sales as (
         AND e.start_day <= DAY(o.order_date)
         AND e.end_day >= DAY(o.order_date)
     where l.returnflag not like 'A'
+    {% if is_incremental() %}
+    and o.order_id not in (select order_id from {{ this }})
+    {% endif %}
 ),
 final as (
     select

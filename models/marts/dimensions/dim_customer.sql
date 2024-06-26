@@ -1,5 +1,8 @@
 with customers as (
     select * from {{ ref('stg_delivery__customer') }}
+    {% if is_incremental() %}
+    where customer_id not in (select customer_id from {{ this }})
+    {% endif %}
 ),
 nation as (
     select * from {{ ref('dim_nation') }}
