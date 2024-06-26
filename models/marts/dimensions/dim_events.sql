@@ -1,5 +1,8 @@
 with events as (
     select * from {{ ref('stg_delivery__sales_event') }}
+    {% if is_incremental() %}
+    where id_event not in (select id_event from {{ this }})
+    {% endif %}
 ),
 final as (
     select

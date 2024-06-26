@@ -1,5 +1,8 @@
 with nation as (
     select * from {{ ref('stg_delivery__nation') }}
+    {% if is_incremental() %}
+    where nation_id not in (select nation_id from {{ this }})
+    {% endif %}
 ),
 region as (
     select * from {{ ref('dim_region') }}
