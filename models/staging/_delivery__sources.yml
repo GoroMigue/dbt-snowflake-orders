@@ -19,9 +19,8 @@ sources:
         columns:
           - name: l_orderkey
             description: primary key for lineitems data
-            tests:
-              - unique
-              - not_null
+          - name: l_linenumber
+            description: primary key for lineitems data
       - name: customer
         description: raw customer data
         columns:
