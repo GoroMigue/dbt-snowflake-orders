@@ -1,18 +1,16 @@
 with events as (
     select * from {{ ref('stg_delivery__sales_event') }}
     {% if is_incremental() %}
-    where id_event not in (select id_event from {{ this }})
+    where event_id not in (select event_id from {{ this }})
     {% endif %}
 ),
 final as (
     select
-        id_event,
+        event_id,
         event_name,
-        start_month,
-        start_day,
-        end_month,
-        end_day,
-        country_id
+        start_date,
+        end_date,
+        nation_id
 
     from 
         events
