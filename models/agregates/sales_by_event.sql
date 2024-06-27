@@ -1,8 +1,7 @@
 select 
-    shop_id,
-    shop_name,
-    shop_nation_id,
-    shop_nation_name,
+    event_id,
+    event_name,
+    nation_id,
     month(shop_date) as order_month, 
     year(shop_date) as order_year,
     count(*) as lines,
@@ -17,5 +16,5 @@ select
     count(distinct customer_id) as customers
     
 from {{ ref('fct_sales') }}
-join {{ ref('dim_shop') }} using (shop_id)
-group by order_year, order_month, shop_id, shop_name, shop_nation_id, shop_nation_name
+join {{ ref('dim_events') }} using (event_id)
+group by event_id, event_name, nation_id, order_month, order_year
