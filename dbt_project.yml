@@ -41,7 +41,7 @@ models:
     staging:
       +materialized: view
     marts:
-      +materialized: table
-    analytics:
+      +materialized: incremental
+    agregates:
       +materialized: view
       +schema: analytics 
