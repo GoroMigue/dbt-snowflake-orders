@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: exchange
+    description: clone of swnowflake sample data
+    database: raw  
+    schema: exchange 
+    tables:
+      - name: exchange_rates
+        description: raw exchange_rates data
+        columns:
+          - name: nation_id
+            description: primary key for exchange_rates data
+            tests:
+              - unique
+              - not_null
