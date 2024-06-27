@@ -25,6 +25,7 @@ sales as (
         shop.shop_nation_id,
         CONVERT_TIMEZONE('UTC', shop.time_zone, o.order_date) as shop_date,
         e.event_id,
+        l.returnflag,
         l.linenumber,
         l.quantity,
         l.discount,
@@ -60,7 +61,7 @@ sales as (
     join shop on shop.shop_id = o.shop_id
     left join events e ON e.nation_id = shop.shop_nation_id
         AND o.order_date between e.start_date and e.end_date
-    where l.returnflag not like 'A'
+    where l.returnflag not like 'N'
     {% if is_incremental() %}
     and o.order_id not in (select order_id from {{ this }})
     {% endif %}
