@@ -2,6 +2,7 @@ select
     event_id,
     event_name,
     nation_id,
+    nation_name,
     month(shop_date) as order_month, 
     year(shop_date) as order_year,
     count(*) as lines,
@@ -17,4 +18,4 @@ select
     
 from {{ ref('fct_sales') }}
 join {{ ref('dim_events') }} using (event_id)
-group by event_id, event_name, nation_id, order_month, order_year
+group by event_id, event_name, nation_id, nation_name, order_month, order_year

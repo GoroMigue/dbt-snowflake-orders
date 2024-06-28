@@ -1,0 +1,1 @@
+select * from {{ ref('stg_exchange__exchange_rates') }}
