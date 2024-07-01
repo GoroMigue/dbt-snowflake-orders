@@ -10,7 +10,21 @@ models:
           - unique
           - not_null
       - name: customer_nation_id
-        description: primery key for nation data
+        description: foreign key for nation data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__nation')
+                field: nation_id  
+  - name: stg_delivery__supplier
+    description: one unique supplier per row
+    columns: 
+      - name: supplier_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+      - name: supplier_nation_id
+        description: foreign key for nation data
         tests:
           - relationships:
                 to: ref('stg_delivery__nation')
@@ -19,7 +33,7 @@ models:
     description: one unique lineitem per row
     columns:
       - name: order_id
-        description: primary key for lineitems data
+        description: foreign key for lineitems data
         tests:
           - relationships:
               to: ref('stg_delivery__orders')
@@ -27,13 +41,13 @@ models:
       - name: linenumber
         description: primary key for lineitems data
       - name: part_id
-        description: primary key for part
+        description: foreign key for part data
         tests:
           - relationships:
               to: ref('stg_delivery__part')
               field: part_id     
       - name: supplier_id
-        description: primery key for supplier data
+        description: foreign key for supplier data
         tests:
           - relationships:
                 to: ref('stg_delivery__supplier')
@@ -52,10 +66,17 @@ models:
           - unique
           - not_null
       - name: customer_id
+        description: foreign key for customer data
         tests:
           - relationships:
-                to: ref('stg_delivery__customers')
+                to: ref('stg_delivery__customer')
                 field: customer_id
+      - name: shop_id
+        description: foreign key for shop data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__shop')
+                field: shop_id 
   - name: stg_delivery__part
     description: one unique order per row
     columns:
@@ -73,7 +94,7 @@ models:
           - unique
           - not_null
       - name: region_id
-        description: primery key for region data
+        description: foreign key for region data
         tests:
           - relationships:
                 to: ref('stg_delivery__region')
@@ -95,7 +116,7 @@ models:
           - unique
           - not_null
       - name: nation_id
-        description: primery key for nation data
+        description: foreign key for nation data
         tests:
           - relationships:
                 to: ref('stg_delivery__nation')
@@ -109,7 +130,7 @@ models:
           - unique
           - not_null
       - name: shop_nation_id
-        description: primery key for nation data
+        description: foreign key for nation data
         tests:
           - relationships:
                 to: ref('stg_delivery__nation')
