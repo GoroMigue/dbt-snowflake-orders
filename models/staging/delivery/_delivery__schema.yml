@@ -1,0 +1,116 @@
+version: 2
+
+models:
+  - name: stg_delivery__customer
+    description: one unique customer per row
+    columns: 
+      - name: customer_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+      - name: customer_nation_id
+        description: primery key for nation data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__nation')
+                field: nation_id  
+  - name: stg_delivery__lineitem
+    description: one unique lineitem per row
+    columns:
+      - name: order_id
+        description: primary key for lineitems data
+        tests:
+          - relationships:
+              to: ref('stg_delivery__orders')
+              field: order_id
+      - name: linenumber
+        description: primary key for lineitems data
+      - name: part_id
+        description: primary key for part
+        tests:
+          - relationships:
+              to: ref('stg_delivery__part')
+              field: part_id     
+      - name: supplier_id
+        description: primery key for supplier data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__supplier')
+                field: supplier_id  
+    tests: 
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - order_id
+            - linenumber
+  - name: stg_delivery__orders
+    description: one unique order per row
+    columns:
+      - name: order_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - relationships:
+                to: ref('stg_delivery__customers')
+                field: customer_id
+  - name: stg_delivery__part
+    description: one unique order per row
+    columns:
+      - name: part_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+  - name: stg_delivery__nation
+    description: one unique nation per row
+    columns:
+      - name: nation_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+      - name: region_id
+        description: primery key for region data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__region')
+                field: region_id      
+  - name: stg_delivery__region
+    description: one unique region per row
+    columns:
+      - name: region_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+  - name: stg_delivery__sales_event
+    description: one unique event per row
+    columns:
+      - name: event_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+      - name: nation_id
+        description: primery key for nation data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__nation')
+                field: nation_id 
+  - name: stg_delivery__shop
+    description: one unique shop per row
+    columns:
+      - name: shop_id
+        description: primary key
+        tests:
+          - unique
+          - not_null
+      - name: shop_nation_id
+        description: primery key for nation data
+        tests:
+          - relationships:
+                to: ref('stg_delivery__nation')
+                field: nation_id 
