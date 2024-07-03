@@ -1,0 +1,104 @@
+/* CREATE STREAMS */
+
+CREATE OR REPLACE STREAM orders_stream ON TABLE RAW.DELIVERY.ORDERS;
+CREATE OR REPLACE STREAM lineitem_stream ON TABLE RAW.DELIVERY.LINEITEM;
+CREATE OR REPLACE STREAM part_stream ON TABLE RAW.DELIVERY.PART;
+
+
+
+/* CONTROL FOR TASKS */
+
+ALTER TASK data_insert_orders suspend;
+ALTER TASK data_insert_lineitem suspend;
+ALTER TASK data_insert_part suspend;
+
+ALTER TASK data_insert_orders resume;
+ALTER TASK data_insert_lineitem resume;
+ALTER TASK data_insert_part resume;
+
+
+
+/* TASK FOR ORDERS */
+
+CREATE OR REPLACE TASK data_insert_orders
+    WAREHOUSE = DELIVERY
+    SCHEDULE = '10 MINUTE'
+AS
+INSERT INTO RAW.DELIVERY.ORDERS 
+(SELECT 
+    O_ORDERKEY,
+    O_CUSTKEY,
+    O_ORDERSTATUS,
+    O_TOTALPRICE,
+    TO_TIMESTAMP_NTZ(CONCAT(TO_CHAR(O_ORDERDATE, 'YYYY-MM-DD'), ' ', TO_CHAR(CURRENT_TIMESTAMP, 'HH24:MI:SS'))) AS O_ORDERDATE,
+    O_ORDERPRIORITY,
+    O_CLERK,
+    O_SHIPPRIORITY,
+    O_COMMENT,
+    UNIFORM(1,100,random()) as SHOPKEY,
+    CURRENT_TIMESTAMP as updated_at
+    
+FROM RAW.SNOW_COPY.ORDERS_COPY
+WHERE O_ORDERKEY NOT IN (SELECT O_ORDERKEY FROM RAW.DELIVERY.ORDERS)
+ORDER BY O_ORDERDATE
+LIMIT 10000);
+select * from raw.delivery.orders;
+
+
+
+/* TASK FOR LINEITEM */
+
+CREATE OR REPLACE TASK data_insert_lineitem
+    WAREHOUSE = DELIVERY
+    AFTER data_insert_orders
+AS
+INSERT INTO RAW.DELIVERY.LINEITEM 
+(SELECT 
+    *
+FROM RAW.SNOW_COPY.LINEITEM_COPY
+WHERE L_ORDERKEY IN 
+    (SELECT O_ORDERKEY 
+    FROM RAW.DELIVERY.ORDERS_STREAM 
+    WHERE metadata$action = 'INSERT')
+AND L_ORDERKEY NOT IN (SELECT L_ORDERKEY FROM RAW.DELIVERY.LINEITEM));
+
+
+
+/* TASK FOR PART */
+
+CREATE OR REPLACE TASK data_insert_part
+    WAREHOUSE = DELIVERY
+    AFTER data_insert_lineitem
+AS
+INSERT INTO RAW.DELIVERY.PART
+(SELECT 
+    *
+FROM RAW.SNOW_COPY.PART_COPY
+WHERE P_PARTKEY IN 
+    (SELECT DISTINCT L_PARTKEY 
+    FROM RAW.DELIVERY.LINEITEM_STREAM 
+    WHERE metadata$action = 'INSERT')
+AND P_PARTKEY NOT IN 
+(SELECT DISTINCT P_PARTKEY FROM RAW.DELIVERY.PART));
+
+
+
+/* UPDATE TASK */
+
+CREATE OR REPLACE TASK update_delivery_time
+    WAREHOUSE = DELIVERY
+    SCHEDULE = '10 MINUTES'
+AS
+UPDATE ANALYTICS.DELIVERY.FCT_SALES 
+    SET DELIVERY_TIME_ID = (
+        case
+            when datediff(day, commitdate, receiptdate) > 30 then 0
+            when datediff(day, commitdate, receiptdate) <= 0 then 1
+            when datediff(day, commitdate, receiptdate) <= 10 then 2
+            else 3
+        end
+    ),
+    updated_at = CURRENT_TIMESTAMP
+    WHERE updated_at <= (SELECT min(updated_at) FROM ANALYTICS.DELIVERY.FCT_SALES);
+
+ALTER TASK update_delivery_time suspend;
