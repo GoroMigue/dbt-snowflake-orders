@@ -21,6 +21,11 @@ sources:
             description: primary key for lineitems data
           - name: l_linenumber
             description: primary key for lineitems data
+        tests: 
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - l_orderkey
+                - l_linenumber
       - name: customer
         description: raw customer data
         columns:

@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: fct_sales
+    description: facts for sales
+    columns: 
+      - name: delivery_time_id
+        description: "{{ doc('delivery_time') }}"
+        tests:
+          - accepted_values:
+              values:
+                - 0
+                - 1
+                - 2
+                - 3
