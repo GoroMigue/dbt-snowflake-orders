@@ -5,7 +5,8 @@ with supplier as (
     {% endif %}
 ),
 nation as (
-    select * from {{ ref('dim_nation') }}
+    select * from {{ ref('stg_delivery__nation') }}
+    join {{ ref('stg_delivery__region') }} using(region_id)
 ),
 supplier_nation as (
     select
