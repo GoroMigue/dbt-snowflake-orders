@@ -5,7 +5,7 @@ with events as (
     {% endif %}
 ),
 nation as (
-    select * from {{ ref('dim_nation') }}
+    select * from {{ ref('stg_delivery__nation') }}
 ),
 final as (
     select
