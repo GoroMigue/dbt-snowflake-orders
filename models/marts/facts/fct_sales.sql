@@ -49,7 +49,8 @@ sales as (
         shop.shop_currency,
         l.extendedprice,
         o.total_price as total_price_default,
-        'USD' as currency
+        'USD' as currency,
+        o.updated_at
 
 
     from
