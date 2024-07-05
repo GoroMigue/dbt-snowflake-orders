@@ -43,11 +43,11 @@ sales as (
         c.customer_id,
         {{ money_converter('l.extendedprice', 'c.rate') }} as customer_item_price,
         {{ money_converter('o.total_price', 'c.rate') }} as customer_total_price,
-        c.currency_to,
+        c.currency_to as customer_currency,
         shop.shop_id,
         {{ money_converter('l.extendedprice', 'shop.rate') }} as shop_item_price,
         {{ money_converter('o.total_price', 'shop.rate') }} as shop_total_price,
-        shop.currency_to,
+        shop.currency_to as shop_currency,
         l.extendedprice,
         o.total_price as total_price_default,
         'USD' as currency,
@@ -61,7 +61,9 @@ sales as (
     join shop on shop.shop_id = o.shop_id
     left join events e ON e.nation_id = shop.shop_nation_id
         AND o.order_date between e.start_date and e.end_date
-
+    {% if is_incremental() %}
+        where o.order_id not in (select order_id from {{ this }})
+    {% endif %}
 ),
 final as (
     select
