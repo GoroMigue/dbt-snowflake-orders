@@ -1,20 +1,21 @@
 with orders as (
-    select * from {{ ref("dim_order") }} 
+    select * from {{ ref("stg_delivery__orders") }} 
 ),
-part as (
-    select * from {{ ref("dim_part") }}
-),
-supplier as (
-    select * from {{ ref('dim_supplier') }}
+lineitem as (
+    select * from {{ ref("stg_delivery__lineitem") }} 
 ),
 customer as (
-    select * from {{ ref('dim_customer') }}
+    select * from {{ ref('stg_delivery__customer') }} c
+    join {{ ref('stg_delivery__nation') }} n on c.customer_nation_id = n.nation_id
+    join {{ ref('stg_exchange__exchange_rates') }} e on e.nation_id = n.nation_id
 ),
 shop as (
-    select * from {{ ref('dim_shop') }}
+    select * from {{ ref('stg_delivery__shop') }} s
+    join {{ ref('stg_delivery__nation') }} n on s.shop_nation_id = n.nation_id
+    join {{ ref('stg_exchange__exchange_rates') }} e on e.nation_id = n.nation_id
 ),
 events as (
-    select * from {{ ref('dim_events') }}
+    select * from {{ ref('stg_delivery__sales_event') }}
 ),
 sales as (
     select 
@@ -37,16 +38,16 @@ sales as (
         {{ delivery_time('l.commitdate','l.receiptdate') }} as delivery_time_id,
         l.shipinstruct,
         l.shipmode,
-        s.supplier_id,
-        p.part_id,
+        l.supplier_id,
+        l.part_id,
         c.customer_id,
-        {{ money_converter('l.extendedprice', 'c.customer_exchange_rate') }} as customer_item_price,
-        {{ money_converter('o.total_price', 'c.customer_exchange_rate') }} as customer_total_price,
-        c.customer_currency,
+        {{ money_converter('l.extendedprice', 'c.rate') }} as customer_item_price,
+        {{ money_converter('o.total_price', 'c.rate') }} as customer_total_price,
+        c.currency_to as customer_currency,
         shop.shop_id,
-        {{ money_converter('l.extendedprice', 'shop.shop_exchange_rate') }} as shop_item_price,
-        {{ money_converter('o.total_price', 'shop.shop_exchange_rate') }} as shop_total_price,
-        shop.shop_currency,
+        {{ money_converter('l.extendedprice', 'shop.rate') }} as shop_item_price,
+        {{ money_converter('o.total_price', 'shop.rate') }} as shop_total_price,
+        shop.currency_to as shop_currency,
         l.extendedprice,
         o.total_price as total_price_default,
         'USD' as currency,
@@ -54,17 +55,14 @@ sales as (
 
 
     from
-        {{ ref('stg_delivery__lineitem') }} l
+        lineitem l
     join orders o on o.order_id = l.order_id
-    join part p on p.part_id = l.part_id
-    join supplier s on s.supplier_id = l.supplier_id
     join customer c on c.customer_id = o.customer_id
     join shop on shop.shop_id = o.shop_id
     left join events e ON e.nation_id = shop.shop_nation_id
         AND o.order_date between e.start_date and e.end_date
-    where l.returnflag not like 'N'
     {% if is_incremental() %}
-    and o.order_id not in (select order_id from {{ this }})
+        where o.order_id not in (select order_id from {{ this }})
     {% endif %}
 ),
 final as (
